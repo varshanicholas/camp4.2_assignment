@@ -1,0 +1,72 @@
+1)
+
+Append a text to the existing text in a file. Other files should be  
+able to interact with this file only in the Read Mode while your 
+application is interacting with the file.
+
+
+ string additionalText = "\nNew Favorite Animal: *Elephant";
+            File.AppendAllText(file_path, additionalText);  
+
+           
+            Console.WriteLine("\nUpdated File Content:");
+            file_content = File.ReadAllText(file_path);
+            Console.WriteLine(file_content);
+
+
+ using (FileStream writeStream = new FileStream(file_path, FileMode.Open, FileAccess.Write, FileShare.Read))
+            {
+                byte[] data = System.Text.Encoding.UTF8.GetBytes("\nThis is appended during exclusive write access.");
+                writeStream.Write(data, 0, data.Length);
+                Console.WriteLine("Exclusive write access was used to append more data.");
+            }
+---------------------------------------------------------
+
+2)
+
+
+Retrieve five characters starting from the third character and 
+display it in a console
+
+
+string substring = file_content.Substring(2, 5);
+            Console.WriteLine("Retrieved characters:");
+            Console.WriteLine(substring);
+
+-------------------------------------------------------
+
+
+5)
+
+Copy a file to another destination specified by the user.
+
+
+
+  Console.Write("Enter destination file path: ");
+            string destinationFilePath = Console.ReadLine();
+
+            try
+            {
+                
+                if (File.Exists(file_path))
+                {
+                
+                    File.Copy(file_path, destinationFilePath);
+                    Console.WriteLine("File copied successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Source file not found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+        }
+        else
+        {
+            Console.WriteLine("File does not exist.");
+        }
+
+    ---------------------------------------------
