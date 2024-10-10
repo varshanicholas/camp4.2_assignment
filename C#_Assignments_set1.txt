@@ -1,0 +1,380 @@
+Delegates
+---------
+
+1.Create a simple delegate that points to a method which takes two integers and returns their sum. 
+Invoke this delegate with various inputs.
+
+/*using System;
+
+public delegate int AddDelegate(int a, int b);
+
+class Program
+{
+    static int Add(int a, int b)
+    {
+        return a + b;
+    }
+
+    static void Main()
+    {
+        AddDelegate adder = new AddDelegate(Add);
+        Console.WriteLine("Sum of 5 and 10: " + adder(5, 10));
+        Console.WriteLine("Sum of 20 and 30: " + adder(20, 30));
+        Console.WriteLine("Sum of 15 and 25: " + adder(15, 25));
+    }
+}*/
+------------------------------------
+
+2.Write a program to demonstrate how to multicast delegates work by calling multiple methods with the same signature.
+
+
+/*
+using System;
+
+public delegate void PrintDelegate(string message);
+
+class Program
+{
+    static void PrintToConsole(string message)
+    {
+        Console.WriteLine("Console: " + message);
+    }
+
+    static void PrintToFile(string message)
+    {
+        // Simulating file logging (could write to a file here)
+        Console.WriteLine("File: " + message);
+    }
+
+    static void Main()
+    {
+        PrintDelegate multiDelegate = PrintToConsole;
+        multiDelegate += PrintToFile;
+
+        multiDelegate("This is a multicast delegate example.");
+    }
+}
+*/
+
+----------------------------------------------
+
+3.Implement a delegate to sort an array of integers using different comparison strategies (e.g., ascending and descending order).
+
+/*
+using System;
+
+public delegate int ComparisonDelegate(int a, int b);
+
+class Program
+{
+    static int AscendingOrder(int a, int b)
+    {
+        return a.CompareTo(b);
+    }
+
+    static int DescendingOrder(int a, int b)
+    {
+        return b.CompareTo(a);
+    }
+
+    static void SortArray(int[] arr, ComparisonDelegate compare)
+    {
+        Array.Sort(arr, new Comparison<int>(compare));
+    }
+
+    static void Main()
+    {
+        int[] numbers = { 3, 5, 1, 4, 2 };
+
+        // Sort in ascending order
+        SortArray(numbers, AscendingOrder);
+        Console.WriteLine("Ascending Order: " + string.Join(", ", numbers));
+
+        // Sort in descending order
+        SortArray(numbers, DescendingOrder);
+        Console.WriteLine("Descending Order: " + string.Join(", ", numbers));
+    }
+}
+*/
+-----------------------
+
+4.Write a delegate that points to methods that perform arithmetic operations (addition, subtraction, multiplication, and division). Allow the user to choose the operation.
+
+
+
+/*
+using System;
+
+public delegate double ArithmeticOperation(double a, double b);
+
+class Program
+{
+    static double Add(double a, double b) => a + b;
+    static double Subtract(double a, double b) => a - b;
+    static double Multiply(double a, double b) => a * b;
+    static double Divide(double a, double b) => a / b;
+
+    static void Main()
+    {
+        ArithmeticOperation operation = null;
+        Console.WriteLine("Choose an operation: 1-Add, 2-Subtract, 3-Multiply, 4-Divide");
+        int choice = Convert.ToInt32(Console.ReadLine());
+
+        switch (choice)
+        {
+            case 1: operation = Add; break;
+            case 2: operation = Subtract; break;
+            case 3: operation = Multiply; break;
+            case 4: operation = Divide; break;
+        }
+
+        if (operation != null)
+        {
+            Console.WriteLine("Enter two numbers:");
+            double x = Convert.ToDouble(Console.ReadLine());
+            double y = Convert.ToDouble(Console.ReadLine());
+            Console.WriteLine("Result: " + operation(x, y));
+        }
+    }
+}
+*/
+
+---------------------------------------------------
+
+
+
+5.Create a custom delegate that filters elements from an array based on a specific condition, such as filtering out even numbers or numbers greater than a certain value.
+
+
+/*
+using System;
+
+public delegate bool FilterDelegate(int number);
+
+class Program
+{
+    static bool IsEven(int number) => number % 2 == 0;
+    static bool IsGreaterThan(int number) => number > 5;
+
+    static int[] FilterArray(int[] arr, FilterDelegate filter)
+    {
+        return Array.FindAll(arr, filter.Invoke);
+    }
+
+    static void Main()
+    {
+        int[] numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+        // Filter even numbers
+        int[] evenNumbers = FilterArray(numbers, IsEven);
+        Console.WriteLine("Even Numbers: " + string.Join(", ", evenNumbers));
+
+        // Filter numbers greater than 5
+        int[] greaterNumbers = FilterArray(numbers, IsGreaterThan);
+        Console.WriteLine("Numbers Greater Than 5: " + string.Join(", ", greaterNumbers));
+    }
+}
+*/
+---------------------------------------
+
+
+
+
+Event Handling
+--------------
+
+1.Create a class that raises an event when a new customer is added. The event should display a welcome message when it is triggered.
+
+
+/*using System;
+
+public delegate void CustomerAddedEventHandler(string name);
+
+class CustomerManager
+{
+    public event CustomerAddedEventHandler CustomerAdded;
+
+    public void AddCustomer(string name)
+    {
+        // Logic to add customer
+        OnCustomerAdded(name);
+    }
+
+    protected virtual void OnCustomerAdded(string name)
+    {
+        CustomerAdded?.Invoke(name);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        CustomerManager manager = new CustomerManager();
+        manager.CustomerAdded += (name) => Console.WriteLine($"Welcome, {name}!");
+        manager.AddCustomer("John Doe");
+    }
+}*/
+-----------------------------------------
+
+
+
+2.Write a program that simulates a clock. Use events to notify subscribers every second that a second has passed.
+
+
+
+/*
+using System;
+using System.Threading;
+
+public delegate void SecondPassedEventHandler();
+
+class Clock
+{
+    public event SecondPassedEventHandler SecondPassed;
+
+    public void Start()
+    {
+        while (true)
+        {
+            Thread.Sleep(1000);
+            OnSecondPassed();
+        }
+    }
+
+    protected virtual void OnSecondPassed()
+    {
+        SecondPassed?.Invoke();
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Clock clock = new Clock();
+        clock.SecondPassed += () => Console.WriteLine("A second has passed.");
+        clock.Start();
+    }
+}
+*/
+-------------------------------------------------------
+
+
+3.Implement an event-based notification system where a "Temperature" class raises an event if the temperature exceeds a certain threshold.
+
+/*
+using System;
+
+public delegate void TemperatureExceededEventHandler();
+
+class Temperature
+{
+    public event TemperatureExceededEventHandler TemperatureExceeded;
+
+    private int _temperature;
+    public int CurrentTemperature
+    {
+        get => _temperature;
+        set
+        {
+            _temperature = value;
+            if (_temperature > 30)
+                OnTemperatureExceeded();
+        }
+    }
+
+    protected virtual void OnTemperatureExceeded()
+    {
+        TemperatureExceeded?.Invoke();
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Temperature temp = new Temperature();
+        temp.TemperatureExceeded += () => Console.WriteLine("Temperature exceeded the threshold!");
+
+        temp.CurrentTemperature = 35;  // Raises event
+    }
+}
+*/
+-----------------------------------------------
+
+
+4.Develop a program where a "Button" class raises a click event and multiple subscribers handle this event (e.g., print a message or log the event).
+
+/*
+using System;
+
+public delegate void ClickEventHandler();
+
+class Button
+{
+    public event ClickEventHandler Click;
+
+    public void OnClick()
+    {
+        Click?.Invoke();
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Button button = new Button();
+        button.Click += () => Console.WriteLine("Button clicked!");
+        button.Click += () => Console.WriteLine("Event logged!");
+
+        button.OnClick();
+    }
+}
+*/
+---------------------------------------------
+
+
+5.Create a custom event that is triggered whenever the balance in a bank account falls below a certain limit, and have it notify the account holder.
+/*
+ * using System;
+
+public delegate void BalanceBelowLimitEventHandler(decimal balance);
+
+class BankAccount
+{
+    public event BalanceBelowLimitEventHandler BalanceBelowLimit;
+
+    private decimal _balance;
+    public decimal Balance
+    {
+        get => _balance;
+        set
+        {
+            _balance = value;
+            if (_balance < 500)
+                OnBalanceBelowLimit(_balance);
+        }
+    }
+
+    protected virtual void OnBalanceBelowLimit(decimal balance)
+    {
+        BalanceBelowLimit?.Invoke(balance);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        BankAccount account = new BankAccount();
+        account.BalanceBelowLimit += (balance) => Console.WriteLine($"Alert! Your balance is low: {balance}");
+
+        account.Balance = 450;  // Triggers event
+    }
+}
+/*
+
+
+-----------------------------------------
