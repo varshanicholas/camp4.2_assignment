@@ -1,0 +1,257 @@
+1.Write a program to parse a given XML file and display its content in a readable format using XmlDocument and XMLReader classes.
+
+https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ms762271(v=vs.85)
+---------------------------------------------------------------------------------------------------------------------------
+XmlDocument doc = new XmlDocument();
+doc.Load("C:\\Users\\hp\\Downloads\\xml.txt"); // Load your XML file here
+
+foreach (XmlNode book in doc.DocumentElement.ChildNodes)
+{
+    Console.WriteLine($"ID: {book.Attributes["id"].Value}");
+    Console.WriteLine($"Author: {book["author"].InnerText}");
+    Console.WriteLine($"Title: {book["title"].InnerText}");
+    Console.WriteLine($"Genre: {book["genre"].InnerText}");
+    Console.WriteLine($"Price: {book["price"].InnerText}");
+    Console.WriteLine($"Publish Date: {book["publish_date"].InnerText}");
+    Console.WriteLine($"Description: {book["description"].InnerText}");
+    Console.WriteLine();
+}
+
+---------------------------------------------------------------------------------------------------------------------------
+
+
+2.Develop a C# program that modifies an existing XML file by adding, updating, and deleting elements.
+
+XmlDocument doc = new XmlDocument();
+doc.Load("C:\\Users\\hp\\Downloads\\xml.txt"); // Load the XML file
+
+XmlNode catalog = doc.SelectSingleNode("/catalog");
+
+// 1. Add a new book
+XmlElement newBook = doc.CreateElement("book");
+newBook.SetAttribute("id", "bk113");
+newBook.AppendChild(CreateElement(doc, "author", "New Author"));
+newBook.AppendChild(CreateElement(doc, "title", "New Book Title"));
+newBook.AppendChild(CreateElement(doc, "genre", "Science Fiction"));
+newBook.AppendChild(CreateElement(doc, "price", "29.95"));
+newBook.AppendChild(CreateElement(doc, "publish_date", "2024-01-01"));
+newBook.AppendChild(CreateElement(doc, "description", "A thrilling sci-fi adventure."));
+catalog.AppendChild(newBook);
+
+// 2. Update an existing book's price
+XmlNode bookToUpdate = doc.SelectSingleNode("/catalog/book[@id='bk101']");
+if (bookToUpdate != null)
+{
+    bookToUpdate["price"].InnerText = "49.95"; // Update the price
+    Console.WriteLine("Updated book bk101 price to 49.95");
+}
+
+// 3. Delete a book (e.g., book with id 'bk112')
+XmlNode bookToDelete = doc.SelectSingleNode("/catalog/book[@id='bk112']");
+if (bookToDelete != null)
+{
+    catalog.RemoveChild(bookToDelete); // Remove the book node
+    Console.WriteLine("Deleted book bk112");
+}
+
+// Save the changes to the file
+doc.Save("catalog_modified.xml");
+Console.WriteLine("XML file modified and saved.");
+
+
+// Helper method to create new XML elements
+static XmlElement CreateElement(XmlDocument doc, string name, string innerText)
+{
+    XmlElement element = doc.CreateElement(name);
+    element.InnerText = innerText;
+    return element;
+}
+
+---------------------------------------------------------------------------------------------------------------------------
+
+3.Parse an XML file that contains information about employees and display only the employees whose salary is greater than a given value.
+
+
+XmlDocument doc = new XmlDocument();
+doc.Load("C:\\Users\\hp\\Downloads\\myxml.txt");
+
+Console.WriteLine("Enter the salary threshold: ");
+double salaryThreshold = Convert.ToDouble(Console.ReadLine());
+
+XmlNodeList employees = doc.SelectNodes("/employees/employee");
+
+Console.WriteLine($"Employees with salary greater than {salaryThreshold}:");
+foreach (XmlNode employee in employees)
+{
+    double salary = Convert.ToDouble(employee["salary"].InnerText);
+    if (salary > salaryThreshold)
+    {
+        string name = employee["name"].InnerText;
+        string position = employee["position"].InnerText;
+        Console.WriteLine($"Name: {name}, Position: {position}, Salary: {salary}");
+    }
+}
+
+---------------------------------------------------------------------------------------------------------------------------
+
+4.Create an XML file with a list of books (title, author, price). Write a program to parse the XML file and display all the books that fall within a specified price range.
+
+XmlDocument doc = new XmlDocument();
+doc.Load("C:\\Users\\hp\\Downloads\\myxml.txt");
+
+Console.WriteLine("Enter the minimum price: ");
+double minPrice = Convert.ToDouble(Console.ReadLine());
+
+Console.WriteLine("Enter the maximum price: ");
+double maxPrice = Convert.ToDouble(Console.ReadLine());
+
+XmlNodeList books = doc.SelectNodes("/catalog/book");
+
+Console.WriteLine($"Books with price between {minPrice} and {maxPrice}:");
+foreach (XmlNode book in books)
+{
+    double price = Convert.ToDouble(book["price"].InnerText);
+    if (price >= minPrice && price <= maxPrice)
+    {
+        string title = book["title"].InnerText;
+        string author = book["author"].InnerText;
+        Console.WriteLine($"Title: {title}, Author: {author}, Price: {price}");
+
+---------------------------------------------------------------------------------------------------------------------------
+
+5.Write a program to create an XML file for student records, including details like name, age, and grade. Then, parse the XML file to display the student with the highest grade.
+
+
+ XmlDocument doc = new XmlDocument();
+ doc.Load("C:\\Users\\hp\\Downloads\\myxml.txt"); // Load the XML file
+
+ XmlNodeList students = doc.SelectNodes("/students/student");
+
+ string topStudentName = "";
+ double highestGrade = double.MinValue; // Initialize to the lowest possible value
+
+ foreach (XmlNode student in students)
+ {
+     string name = student["name"].InnerText;
+     double grade = Convert.ToDouble(student["grade"].InnerText);
+
+     if (grade > highestGrade)
+     {
+         highestGrade = grade;
+         topStudentName = name;
+     }
+ }
+
+ 
+ Console.WriteLine($"The student with the highest grade is {topStudentName} with a grade of {highestGrade}.");
+
+---------------------------------------------------------------------------------------------------------------------------
+
+
+file handling
+
+
+
+1.Write a program to create a text file, write some content to it, and then read the content from the file and display it on the console.
+using System;
+using System.IO;
+
+
+        string filePath = "Downlaod/Test.txt";
+
+        // Create a text file and write content to it
+        using (StreamWriter writer = new StreamWriter(filePath))
+        {
+            writer.WriteLine("Hello, this is a sample text file.");
+            writer.WriteLine("It contains multiple lines of text.");
+            writer.WriteLine("File handling in C# is easy!");
+        }
+
+        // Read the content from the file and display it on the console
+        using (StreamReader reader = new StreamReader(filePath))
+        {
+            string content = reader.ReadToEnd();
+            Console.WriteLine("Content of the file:");
+            Console.WriteLine(content);
+        }
+ 
+
+3.Develop a file handling program that reads from one file and writes its content into another file, handling exceptions that may occur during file operations.
+
+
+ string sourcePath = "source.txt";
+        string destinationPath = "destination.txt";
+
+        try
+        {
+            // Read content from the source file
+            using (StreamReader reader = new StreamReader(sourcePath))
+            {
+                string content = reader.ReadToEnd();
+
+                // Write content to the destination file
+                using (StreamWriter writer = new StreamWriter(destinationPath))
+                {
+                    writer.Write(content);
+                }
+            }
+            Console.WriteLine("Content copied successfully.");
+        }
+        catch (FileNotFoundException)
+        {
+            Console.WriteLine("Source file not found.");
+        }
+        catch (IOException ex)
+        {
+            Console.WriteLine($"An IO error occurred: {ex.Message}");
+        }
+ ]
+
+
+
+4.Write a program that appends new content to an existing text file without overwriting its previous content.
+-------------------------------------------------------------------------
+
+using System;
+using System.IO;
+
+
+        string filePath = "Downlaod/Test.txt";
+
+        // Append new content to the existing text file
+        using (StreamWriter writer = new StreamWriter(filePath, true))
+        {
+            writer.WriteLine("This line is appended to the existing content.");
+            writer.WriteLine("Appending is simple with StreamWriter!");
+        }
+
+        // Read and display the updated content
+        using (StreamReader reader = new StreamReader(filePath))
+        {
+            string content = reader.ReadToEnd();
+            Console.WriteLine("Updated content of the file:");
+            Console.WriteLine(content);
+        }
+
+5.Create a C# program that searches for a specific word in a file and replaces all occurrences of that word with another word.
+
+
+        string filePath = "Test.txt";
+        string oldWord = "sample";
+        string newWord = "example";
+
+        // Read the content from the file
+        string content = File.ReadAllText(filePath);
+
+        // Replace all occurrences of the old word with the new word
+        content = content.Replace(oldWord, newWord);
+
+        // Write the updated content back to the file
+        File.WriteAllText(filePath, content);
+
+        Console.WriteLine("Word replacement completed.");
+        Console.WriteLine("Updated content of the file:");
+        Console.WriteLine(content);
+
+
+---------------------------------
